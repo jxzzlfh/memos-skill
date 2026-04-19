@@ -1,101 +1,101 @@
 # Memos Skill
 
-A CLI skill for interacting with [Memos](https://github.com/usememos/memos) API. Designed for AI agents (Claude Code, OpenClaw, etc.) to create, read, delete, and list memos.
+一个用于与 [Memos](https://github.com/usememos/memos) API 交互的 CLI 技能。为 AI Agent（Claude Code、OpenClaw 等）设计，支持创建、读取、删除和列出备忘录。
 
-## Features
+## 特性
 
-- Create / Get / Delete / List memos via command line
-- Support content from direct argument, file (`--file`), or stdin (`-`)
-- UTF-8 first — handles Chinese, emoji, and special characters correctly on Windows/macOS/Linux
-- Auto-appends `#AI-Agent` tag to created memos
-- JSON output with structured error reporting
+- 命令行操作：创建 / 获取 / 删除 / 列出备忘录
+- 多种内容输入方式：直接传参、文件读取（`--file`）、标准输入（`-`）
+- UTF-8 优先 — 正确处理中文、emoji、特殊字符，兼容 Windows/macOS/Linux
+- 创建备忘录时自动追加 `#AI-Agent` 标签
+- JSON 格式输出，结构化错误报告
 
-## Quick Start
+## 快速开始
 
-### 1. Install dependency
+### 1. 安装依赖
 
 ```bash
 pip install requests
 ```
 
-### 2. Configure
+### 2. 配置
 
-Create a `.env` file in the skill directory:
+在技能目录下创建 `.env` 文件：
 
 ```env
 MEMOS_URL=https://your-memos-instance.com
 MEMOS_TOKEN=memos_pat_xxxxx
 ```
 
-Or set environment variables directly.
+也可以直接设置环境变量。
 
-### 3. Use
+### 3. 使用
 
 ```bash
-# Create a memo
+# 创建备忘录
 python memos.py create "Hello world" "PUBLIC"
 
-# Create from file (recommended for long or non-ASCII content)
+# 从文件创建（推荐长内容和非 ASCII 内容使用）
 python memos.py create --file content.md "PUBLIC"
 
-# Create from stdin (pipe-friendly)
+# 从标准输入创建（管道友好）
 cat content.md | python memos.py create - "PUBLIC"
 
-# Get a memo
+# 获取备忘录
 python memos.py get <memo_id>
 
-# Delete a memo
+# 删除备忘录
 python memos.py delete <memo_id>
 
-# List memos
+# 列出备忘录
 python memos.py list 50
 ```
 
-All commands return JSON on stdout. Errors go to stderr as JSON.
+所有命令成功时输出 JSON 到 stdout，错误时输出 JSON 到 stderr。
 
-## Commands
+## 命令一览
 
-| Command | Description |
-|---------|-------------|
-| `create <content\|-\|--file path> [visibility]` | Create a memo. Visibility: `PUBLIC` (default), `PRIVATE`, `PROTECTED` |
-| `get <id>` | Retrieve a memo by ID |
-| `delete <id> [force]` | Delete a memo |
-| `list [pageSize]` | List memos (default 20, max 1000) |
+| 命令 | 说明 |
+|------|------|
+| `create <content\|-\|--file path> [visibility]` | 创建备忘录。可见性：`PUBLIC`（默认）、`PRIVATE`、`PROTECTED` |
+| `get <id>` | 按 ID 获取备忘录 |
+| `delete <id> [force]` | 删除备忘录 |
+| `list [pageSize]` | 列出备忘录（默认 20，最大 1000） |
 
-## File Structure
+## 文件结构
 
 ```
 memos-skill/
-├── memos.py       # Main script — CLI + Python API
-├── SKILL.md       # Agent-facing skill documentation
-├── .env.example   # Environment variable template
+├── memos.py       # 主脚本 — CLI + Python API
+├── SKILL.md       # Agent 面向的技能文档
+├── env.example    # 环境变量模板
 ├── .gitignore
 └── README.md
 ```
 
 ## Python API
 
-You can also use it as a Python module:
+也可以作为 Python 模块使用：
 
 ```python
 from memos import create, get, delete, list_memos
 
-# Create
-result = create("My memo content", "PUBLIC")
+# 创建
+result = create("备忘录内容", "PUBLIC")
 
-# Get
+# 获取
 memo = get("memos/ABC123")
 
-# Delete
+# 删除
 delete("ABC123", force=True)
 
-# List
+# 列出
 memos = list_memos(pageSize=50)
 ```
 
-## Error Handling
+## 错误处理
 
-All errors are returned as JSON with structured fields:
+所有错误以 JSON 格式返回，包含结构化字段：
 
 ```json
 {
